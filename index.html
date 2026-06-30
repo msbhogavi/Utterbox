@@ -10,89 +10,72 @@
 <body>
   <div class="page-shell">
     <header class="topbar">
-      <div class="brand-lockup">
+      <a class="brand-lockup" href="./" aria-label="Utterbox home">
         <img class="brand-icon" src="./site-assets/app-icon.png" alt="Utterbox app icon">
-        <div>
-          <p class="eyebrow">Camera-aligned prompting for macOS</p>
-          <h1>Utterbox</h1>
-        </div>
-      </div>
+        <span class="brand-name">Utterbox</span>
+      </a>
 
-      <nav class="actions">
-        <a class="secondary" href="https://github.com/msbhogavi/Utterbox">Source</a>
-        <a class="primary" href="./Utterbox.dmg">Download DMG</a>
+      <nav class="actions" aria-label="Primary">
+        <a class="secondary" href="https://github.com/msbhogavi/Utterbox">GitHub</a>
+        <a class="primary" href="./Utterbox.dmg">Download</a>
       </nav>
     </header>
 
     <main>
       <section class="hero">
         <div class="hero-copy">
-          <p class="kicker">Read naturally, not at the center of the screen.</p>
+          <p class="eyebrow">Camera-aligned prompting for macOS</p>
+          <h1>Keep your eyes where the camera is.</h1>
           <p class="lede">
-            Utterbox keeps your script close to the camera line on a MacBook notch
-            or near an external webcam, so eye contact stays believable during
-            demos, calls, and recorded walkthroughs.
+            Utterbox places your script on the camera line, whether you are reading from a
+            MacBook notch or an external webcam above a larger display.
           </p>
-
           <div class="button-row">
             <a class="primary large" href="./Utterbox.dmg">Download for macOS</a>
-            <a class="ghost large" href="https://github.com/msbhogavi/Utterbox">View on GitHub</a>
-          </div>
-
-          <ul class="hero-points">
-            <li>Sticky notch mode for MacBook presentations</li>
-            <li>Floating mode for external displays and off-center webcams</li>
-            <li>Voice follow, manual scroll, live resizing, and keyboard control</li>
-          </ul>
-        </div>
-
-        <div class="hero-visual">
-          <div class="shot-frame">
-            <img src="./site-assets/utterbox-hero.png" alt="Utterbox prompter overlay on a desktop display">
+            <a class="text-link" href="https://github.com/msbhogavi/Utterbox">View source</a>
           </div>
         </div>
+
+        <figure class="hero-visual">
+          <img src="./site-assets/utterbox-hero.png" alt="Utterbox overlay shown on a desktop display">
+        </figure>
+      </section>
+
+      <section class="intro-band" aria-label="Product summary">
+        <p>
+          Two placement modes. Voice follow when you want it. Direct manual control when you do not.
+        </p>
       </section>
 
       <section class="feature-grid">
         <article class="feature">
-          <h2>Two camera placements</h2>
+          <h2>MacBook camera</h2>
           <p>
-            Use the notch when the MacBook camera is your eyeline. Switch to a floating
-            prompter when the real webcam lives somewhere else.
+            A notch-aligned mode for built-in webcam setups where the natural eyeline is fixed.
           </p>
         </article>
 
         <article class="feature">
-          <h2>Presenter-friendly controls</h2>
+          <h2>External camera</h2>
           <p>
-            Resize the overlay in place, scrub with the mouse while playing, and control
-            show or hide, playback, editing, and speed through shortcuts.
+            A floating mode for studio monitors, external webcams, and desk layouts that are not centered.
           </p>
         </article>
 
         <article class="feature">
-          <h2>Privacy-first defaults</h2>
+          <h2>Private by default</h2>
           <p>
-            Voice recognition runs on-device by default, cloud fallback is explicit,
-            and script persistence can stay off unless you want drafts remembered.
+            On-device speech is the default, cloud fallback is explicit, and draft persistence is optional.
           </p>
         </article>
       </section>
 
-      <section class="details">
-        <div class="detail-card">
-          <h2>Built for real speaking setups</h2>
-          <p>
-            The point is not just scrolling text. It is preserving eye contact when your
-            camera, display, and speaking rhythm do not naturally line up.
-          </p>
+      <section class="closing-band">
+        <div>
+          <p class="eyebrow">Built for real speaking setups</p>
+          <h2>Designed for calls, demos, and recorded walkthroughs.</h2>
         </div>
-
-        <div class="detail-card">
-          <h2>Download</h2>
-          <p>The latest repo build is published as a DMG in this project.</p>
-          <a class="primary" href="./Utterbox.dmg">Get Utterbox.dmg</a>
-        </div>
+        <a class="primary" href="./Utterbox.dmg">Get the DMG</a>
       </section>
     </main>
   </div>
