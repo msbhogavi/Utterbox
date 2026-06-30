@@ -20,6 +20,7 @@ struct OverlayContentView: View {
     @State private var hoveringStickyControls = false
     @State private var selectedMicrophoneID =
         UserDefaults.standard.string(forKey: DefaultsKey.selectedMicrophoneID) ?? ""
+    @State private var selectedSpeechRecognitionMode = SpeechRecognitionMode.fromDefaults()
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -113,8 +114,14 @@ struct OverlayContentView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)) { _ in
             let newMicrophoneID = UserDefaults.standard.string(forKey: DefaultsKey.selectedMicrophoneID) ?? ""
-            guard newMicrophoneID != selectedMicrophoneID else { return }
+            let newSpeechRecognitionMode = SpeechRecognitionMode.fromDefaults()
+            let didMicrophoneChange = newMicrophoneID != selectedMicrophoneID
+            let didRecognitionModeChange = newSpeechRecognitionMode != selectedSpeechRecognitionMode
+
+            guard didMicrophoneChange || didRecognitionModeChange else { return }
+
             selectedMicrophoneID = newMicrophoneID
+            selectedSpeechRecognitionMode = newSpeechRecognitionMode
             if vm.voiceFollowEnabled {
                 startSpeech()
             }
@@ -151,6 +158,7 @@ struct OverlayContentView: View {
 
     private func startSpeech() {
         speech.start(contextualStrings: vm.voiceContextualStrings,
+                     recognitionMode: selectedSpeechRecognitionMode,
                      selectedMicrophoneID: selectedMicrophoneID.isEmpty ? nil : selectedMicrophoneID)
     }
 

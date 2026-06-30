@@ -15,7 +15,13 @@ final class PrompterViewModel: ObservableObject {
                 undoStack.append(oldValue)
                 redoStack.removeAll()
             }
-            UserDefaults.standard.set(script, forKey: DefaultsKey.currentScript)
+            persistCurrentScriptIfNeeded()
+        }
+    }
+    @Published var rememberCurrentScript: Bool {
+        didSet {
+            UserDefaults.standard.set(rememberCurrentScript, forKey: DefaultsKey.rememberCurrentScript)
+            persistCurrentScriptIfNeeded()
         }
     }
     @Published var speed: Double {
@@ -79,7 +85,11 @@ final class PrompterViewModel: ObservableObject {
     var canRedoScriptEdit: Bool { !redoStack.isEmpty }
 
     init() {
-        script = UserDefaults.standard.string(forKey: DefaultsKey.currentScript) ?? "Paste your script here."
+        let shouldRememberScript = (UserDefaults.standard.object(forKey: DefaultsKey.rememberCurrentScript) as? Bool) ?? false
+        rememberCurrentScript = shouldRememberScript
+        script = shouldRememberScript
+            ? (UserDefaults.standard.string(forKey: DefaultsKey.currentScript) ?? Layout.defaultScript)
+            : Layout.defaultScript
         speed = (UserDefaults.standard.object(forKey: DefaultsKey.prompterSpeed) as? Double) ?? 35
         fontSize = (UserDefaults.standard.object(forKey: DefaultsKey.prompterFontSize) as? Double) ?? 16
         voiceFollowEnabled = (UserDefaults.standard.object(forKey: DefaultsKey.voiceFollowEnabled) as? Bool) ?? false
@@ -112,9 +122,15 @@ final class PrompterViewModel: ObservableObject {
                     self.voiceFollowEnabled = newVoiceFollow
                 }
 
+                let newRememberSetting = (UserDefaults.standard.object(forKey: DefaultsKey.rememberCurrentScript) as? Bool) ?? self.rememberCurrentScript
+                if newRememberSetting != self.rememberCurrentScript {
+                    self.rememberCurrentScript = newRememberSetting
+                }
+
                 // Script changes via settings import/export also reflect
-                let newScript = UserDefaults.standard.string(forKey: DefaultsKey.currentScript) ?? self.script
-                if newScript != self.script {
+                let savedScript = UserDefaults.standard.string(forKey: DefaultsKey.currentScript)
+                let newScript = self.rememberCurrentScript ? (savedScript ?? self.script) : self.script
+                if self.rememberCurrentScript, newScript != self.script {
                     self.replaceScript(newScript, resetHistory: true)
                     self.rebuildVoiceTargets()
                     self.offsetY = 0
@@ -184,7 +200,15 @@ final class PrompterViewModel: ObservableObject {
         defer { if didStart { url.stopAccessingSecurityScopedResource() } }
 
         do {
-            let data = try Data(contentsOf: url)
+            let resourceValues = try url.resourceValues(forKeys: [.fileSizeKey])
+            if let fileSize = resourceValues.fileSize, fileSize > Layout.maxImportFileBytes {
+                throw ImportError.fileTooLarge
+            }
+
+            let data = try Data(contentsOf: url, options: [.mappedIfSafe])
+            if data.count > Layout.maxImportFileBytes {
+                throw ImportError.fileTooLarge
+            }
             let text = String(data: data, encoding: .utf8) ?? String(decoding: data, as: UTF8.self)
             DispatchQueue.main.async {
                 self.replaceScript(text, resetHistory: true)
@@ -436,6 +460,25 @@ final class PrompterViewModel: ObservableObject {
     @objc private func handleShowControlsInNotch(_ note: Notification) {
         if let v = note.object as? Bool {
             DispatchQueue.main.async { self.showControlsInNotch = v }
+        }
+    }
+
+    private func persistCurrentScriptIfNeeded() {
+        if rememberCurrentScript {
+            UserDefaults.standard.set(script, forKey: DefaultsKey.currentScript)
+        } else {
+            UserDefaults.standard.removeObject(forKey: DefaultsKey.currentScript)
+        }
+    }
+}
+
+private enum ImportError: LocalizedError {
+    case fileTooLarge
+
+    var errorDescription: String? {
+        switch self {
+        case .fileTooLarge:
+            return "Please import a plain-text script under 2 MB."
         }
     }
 }

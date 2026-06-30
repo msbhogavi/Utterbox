@@ -64,11 +64,14 @@ final class SpeechVoiceActivityDetector: NSObject, ObservableObject {
     private var isRestarting = false
     private var contextualStrings: [String] = []
     private var selectedMicrophoneID: String?
+    private var recognitionMode: SpeechRecognitionMode = .onDeviceOnly
     private var receivedAudioFrames = 0
 
     func start(contextualStrings: [String] = [],
+               recognitionMode: SpeechRecognitionMode = SpeechRecognitionMode.fromDefaults(),
                selectedMicrophoneID: String? = UserDefaults.standard.string(forKey: DefaultsKey.selectedMicrophoneID)) {
         self.contextualStrings = contextualStrings
+        self.recognitionMode = recognitionMode
         self.selectedMicrophoneID = selectedMicrophoneID
 
         Task { @MainActor in
@@ -139,12 +142,16 @@ final class SpeechVoiceActivityDetector: NSObject, ObservableObject {
             statusText = "Recognizer unavailable"
             return
         }
+        guard recognitionMode == .allowServerFallback || recognizer.supportsOnDeviceRecognition else {
+            statusText = "On-device speech unavailable"
+            return
+        }
 
         let req = SFSpeechAudioBufferRecognitionRequest()
         req.shouldReportPartialResults = true
         req.taskHint = .dictation
         req.contextualStrings = contextualStrings
-        req.requiresOnDeviceRecognition = false
+        req.requiresOnDeviceRecognition = recognitionMode == .onDeviceOnly
         request = req
         lastResultTime = .distantPast
         receivedAudioFrames = 0

@@ -9,10 +9,12 @@ import AppKit
 
 enum DefaultsKey {
     static let currentScript = "currentScript"
+    static let rememberCurrentScript = "rememberCurrentScript"
     static let prompterSpeed = "prompterSpeed"
     static let prompterFontSize = "prompterFontSize"
     static let voiceFollowEnabled = "voiceFollowEnabled"
     static let selectedMicrophoneID = "selectedMicrophoneID"
+    static let speechRecognitionMode = "speechRecognitionMode"
 
     static let notchWidthSaved = "notchWidthSaved"
     static let notchHeightSaved = "notchHeightSaved"
@@ -26,6 +28,36 @@ enum DefaultsKey {
     static let floatingYSaved = "floatingYSaved"
 }
 
+enum SpeechRecognitionMode: String, CaseIterable, Identifiable {
+    case onDeviceOnly = "onDeviceOnly"
+    case allowServerFallback = "allowServerFallback"
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .onDeviceOnly:
+            return "On-device only"
+        case .allowServerFallback:
+            return "Allow server fallback"
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .onDeviceOnly:
+            return "Keeps recognition local. Voice follow stays off if this Mac cannot run speech on-device."
+        case .allowServerFallback:
+            return "Lets macOS use Apple's servers when local recognition is unavailable. Script cue words may leave the device."
+        }
+    }
+
+    static func fromDefaults() -> SpeechRecognitionMode {
+        let raw = UserDefaults.standard.string(forKey: DefaultsKey.speechRecognitionMode) ?? Self.onDeviceOnly.rawValue
+        return Self(rawValue: raw) ?? .onDeviceOnly
+    }
+}
+
 extension Notification.Name {
     static let overlayShowControlsInNotch = Notification.Name("OverlayUI.showControlsInNotch")
     static let overlayShowStickyResizeHandles = Notification.Name("OverlayUI.showStickyResizeHandles")
@@ -36,6 +68,9 @@ extension Notification.Name {
 
 /// All UI/timing/layout constants
 enum Layout {
+    static let defaultScript = "Paste your script here."
+    static let maxImportFileBytes = 2_000_000
+
     // ===== Sticky layout (used by OverlayManager) =====
     static let stripHeight: CGFloat = 260
     static let topInsetInStrip: CGFloat = 35

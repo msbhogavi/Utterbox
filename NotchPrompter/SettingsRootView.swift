@@ -54,6 +54,9 @@ struct SettingsRootView: View {
     @State private var microphones: [MicrophoneDevice] = []
     @State private var selectedMicrophoneID =
         UserDefaults.standard.string(forKey: DefaultsKey.selectedMicrophoneID) ?? ""
+    @State private var speechRecognitionMode = SpeechRecognitionMode.fromDefaults()
+    @State private var rememberCurrentScript =
+        (UserDefaults.standard.object(forKey: DefaultsKey.rememberCurrentScript) as? Bool) ?? false
 
     @State private var notchWidth: CGFloat = {
         let w = CGFloat(UserDefaults.standard.double(forKey: DefaultsKey.notchWidthSaved))
@@ -96,6 +99,7 @@ struct SettingsRootView: View {
                     }
 
                     deliveryCard
+                    privacyCard
                     scriptCard
                     shortcutCard
                 }
@@ -115,6 +119,12 @@ struct SettingsRootView: View {
             } else {
                 UserDefaults.standard.set(newValue, forKey: DefaultsKey.selectedMicrophoneID)
             }
+        }
+        .onChange(of: speechRecognitionMode) { _, newValue in
+            UserDefaults.standard.set(newValue.rawValue, forKey: DefaultsKey.speechRecognitionMode)
+        }
+        .onChange(of: rememberCurrentScript) { _, newValue in
+            UserDefaults.standard.set(newValue, forKey: DefaultsKey.rememberCurrentScript)
         }
         .onChange(of: windowModeSetting) { _, newValue in
             OverlaySettings.setWindowMode(newValue)
@@ -255,8 +265,34 @@ struct SettingsRootView: View {
         }
     }
 
+    private var privacyCard: some View {
+        SettingsCard("Privacy", subtitle: "Speech and script storage stay explicit here.") {
+            VStack(alignment: .leading, spacing: 12) {
+                Toggle("Remember current script between launches", isOn: $rememberCurrentScript)
+
+                Text("When off, the draft stays in memory for the current session only.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                Divider()
+
+                Picker("Speech Recognition", selection: $speechRecognitionMode) {
+                    ForEach(SpeechRecognitionMode.allCases) { mode in
+                        Text(mode.displayName).tag(mode)
+                    }
+                }
+
+                Text(speechRecognitionMode.detail)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+    }
+
     private var scriptCard: some View {
-        SettingsCard("Script", subtitle: "Import plain text or export the current draft.") {
+        SettingsCard("Script", subtitle: "Import plain text or export the current draft. Imports are capped at 2 MB.") {
             HStack(spacing: 10) {
                 Button("Import") { showingImporter = true }
                 Button("Export") {

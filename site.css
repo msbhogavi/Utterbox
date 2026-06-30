@@ -1,0 +1,251 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b0d10;
+  --panel: rgba(15, 18, 24, 0.84);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --text: #f4f0e8;
+  --muted: #b0aca5;
+  --accent: #ffb44d;
+  --accent-strong: #ff8d3a;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(255, 180, 77, 0.14), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(49, 108, 255, 0.16), transparent 34%),
+    linear-gradient(180deg, #11151b 0%, #090b0e 100%);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "SF Pro Display", "Avenir Next", "Helvetica Neue", sans-serif;
+  color: var(--text);
+}
+
+.page-shell {
+  width: min(1200px, calc(100vw - 40px));
+  margin: 0 auto;
+  padding: 24px 0 56px;
+}
+
+.topbar,
+.hero,
+.feature-grid,
+.details {
+  width: 100%;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.eyebrow,
+.kicker {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p,
+ul {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 0.98;
+}
+
+.actions,
+.button-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.primary,
+.secondary,
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #111;
+  font-weight: 700;
+}
+
+.secondary,
+.ghost {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.large {
+  min-height: 52px;
+  padding: 0 22px;
+}
+
+a:hover {
+  transform: translateY(-1px);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.hero-copy,
+.feature,
+.detail-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow);
+}
+
+.hero-copy {
+  padding: 34px;
+  border-radius: 28px;
+}
+
+.lede {
+  color: var(--muted);
+  font-size: 19px;
+  line-height: 1.55;
+  max-width: 20em;
+  margin-bottom: 24px;
+}
+
+.hero-points {
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.hero-visual {
+  min-width: 0;
+}
+
+.shot-frame {
+  padding: 18px;
+  border-radius: 28px;
+  background: rgba(8, 10, 14, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow);
+}
+
+.shot-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.feature,
+.detail-card {
+  border-radius: 22px;
+  padding: 24px;
+}
+
+.feature h2,
+.detail-card h2 {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.feature p,
+.detail-card p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+}
+
+.detail-card .primary {
+  margin-top: 18px;
+}
+
+@media (max-width: 960px) {
+  .topbar,
+  .hero,
+  .feature-grid,
+  .details {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .feature-grid,
+  .details {
+    display: grid;
+  }
+
+  .page-shell {
+    width: min(100vw - 24px, 1200px);
+    padding-top: 18px;
+  }
+
+  .hero-copy {
+    padding: 24px;
+  }
+}
