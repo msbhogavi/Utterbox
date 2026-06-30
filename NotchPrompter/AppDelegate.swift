@@ -59,7 +59,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            let img = NSImage(named: "StatusIcon") ?? NSImage(systemSymbolName: "text.alignleft", accessibilityDescription: "Utterbox")
+            let img = makeStatusIcon()
             img?.isTemplate = true
             img?.size = NSSize(width: 18, height: 18)
             button.image = img
@@ -105,6 +105,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         state.windowMode = OverlaySettings.getWindowMode()
         refreshMenuChecks()
+    }
+
+    private func makeStatusIcon() -> NSImage? {
+        if let assetImage = NSImage(named: "StatusIcon") {
+            return assetImage
+        }
+
+        if let url = Bundle.main.url(forResource: "StatusIcon", withExtension: "pdf"),
+           let pdfImage = NSImage(contentsOf: url) {
+            return pdfImage
+        }
+
+        return NSImage(systemSymbolName: "text.alignleft", accessibilityDescription: "Utterbox")
     }
 
     @objc private func toggleOverlayEnabled() {
